@@ -1,4 +1,3 @@
-from _typeshed import StrPath
 import json
 import re
 from os import PathLike
@@ -167,7 +166,7 @@ class Templates:
             loader=FileSystemLoader("templates"),
         )
 
-    def render_generated_classes(self, template_variables: List[SUB_CLASS], path: StrPath = ""):
+    def render_generated_classes(self, template_variables: List[SUB_CLASS], path: Union[str, PathLike] = ""):
         for x in template_variables:
             _path = Path(path) / x["filename"]
             if x["sub_classes"]:
