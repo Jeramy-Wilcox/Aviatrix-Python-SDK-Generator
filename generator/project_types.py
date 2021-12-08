@@ -9,6 +9,7 @@ class ARGS(TypedDict):
     example: str
     default: str
 
+
 class API(TypedDict):
     name: str
     method: str
@@ -16,11 +17,13 @@ class API(TypedDict):
     action: str
     args: List[ARGS]
 
+
 class SUB_CLASS(TypedDict):
     name: str
     filename: str
     sub_classes: List[Any]
     api_calls: List[API]
+
 
 class PARSED_POSTMAN(TypedDict):
     sub_classes: List[SUB_CLASS]

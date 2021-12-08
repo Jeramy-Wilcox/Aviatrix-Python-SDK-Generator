@@ -1,12 +1,12 @@
+from _typeshed import StrPath
 import json
-from os import PathLike
 import re
-from typing import Any, Dict, List, Union
+from os import PathLike
 from pathlib import Path
+from typing import Any, Dict, List, Union
 
 from jinja2 import FileSystemLoader, StrictUndefined
 from jinja2.environment import Environment
-
 from project_types import API, ARGS, PARSED_POSTMAN, SUB_CLASS
 
 ARG_TYPES = {
@@ -29,11 +29,13 @@ def parse_items(items: List[Dict[str, Any]]) -> PARSED_POSTMAN:
             continue
         try:
 
-            sub_classes.append({
-                "name": sanitize_class_name(item["name"]),
-                "filename": snake_case_name(item["name"]),
-                **parse_items(item["item"]),
-            }) #type: ignore
+            sub_classes.append(
+                {
+                    "name": sanitize_class_name(item["name"]),
+                    "filename": snake_case_name(item["name"]),
+                    **parse_items(item["item"]),
+                }
+            )
         except KeyError:
             api_calls.append(get_params(item))
     return {
@@ -70,11 +72,13 @@ def get_params(api_call: Dict[str, Any]) -> API:
         raise KeyError
 
     details["args"] = get_args(args)
-    return details #type: ignore
+    return details  # type: ignore
+
 
 def sanitize_class_name(name: str) -> str:
     """ remove all non-alphanumeric characters from the name """
     return re.sub(r"[^\w]", "", name)
+
 
 def snake_case_name(name: str) -> str:
     """ replace all non-alphanumeric characters with underscores """
@@ -83,18 +87,22 @@ def snake_case_name(name: str) -> str:
     trailing_underscores_removed = re.sub(r"_$", "", duplicate_underscores_removed)
     return trailing_underscores_removed.lower()
 
+
 def parse_description(description: str) -> List[str]:
     pattern = r"Description\n-*[\n]*\+?"
     _des = re.sub(pattern, "", description)
     return [x.strip() for x in _des.split("+ ")]
+
 
 def parse_arg_name(arg: str) -> str:
     descriptors_removed = arg.split(" ")[0]
     list_notation_removed = descriptors_removed.split("[")[0]
     return list_notation_removed
 
+
 def parse_examples(example: str) -> str:
-    return example.replace("\"", "")
+    return example.replace('"', "")
+
 
 def get_args(args: List[Dict[str, str]]) -> List[ARGS]:
     return_args: List[ARGS] = []
@@ -132,6 +140,7 @@ def get_args(args: List[Dict[str, str]]) -> List[ARGS]:
             )
     return return_args
 
+
 def get_value(pattern: str, description: str) -> str:
     _patterns = {
         "required": r"Required\n(\w*)\n",
@@ -146,6 +155,7 @@ def get_value(pattern: str, description: str) -> str:
     else:
         return ""
 
+
 class Templates:
     def __init__(self, template_variables: List[SUB_CLASS]):
         self.data = template_variables
@@ -157,18 +167,33 @@ class Templates:
             loader=FileSystemLoader("templates"),
         )
 
-    def render_generated_classes(self, template_variables: List[SUB_CLASS], path: Union[str, PathLike] = ""):
+    def render_generated_classes(self, template_variables: List[SUB_CLASS], path: StrPath = ""):
         for x in template_variables:
-            _path = Path(path) / x['filename']
+            _path = Path(path) / x["filename"]
             if x["sub_classes"]:
                 # _path = _path / x['filename']
-                self.render_template(template_name="class.j2", filename=f"{_path}/__init__.py", template_variables=x)
-                self.render_generated_classes(template_variables = x["sub_classes"], path = _path)
+                self.render_template(
+                    template_name="class.j2",
+                    filename=f"{_path}/__init__.py",
+                    template_variables=x,
+                )
+                self.render_generated_classes(
+                    template_variables=x["sub_classes"], path=_path
+                )
             else:
                 # _path = _path / x["filename"]
-                self.render_template(template_name="class.j2", template_variables=x, filename=f"{_path}.py")
+                self.render_template(
+                    template_name="class.j2",
+                    template_variables=x,
+                    filename=f"{_path}.py",
+                )
 
-    def render_template(self, template_name: str, filename: Union[str, PathLike], template_variables: Any = None):
+    def render_template(
+        self,
+        template_name: str,
+        filename: Union[str, PathLike],
+        template_variables: Any = None,
+    ):
         if template_variables is None:
             template_variables = {"data": self.data}
         template = self.j2_env.get_template(template_name)
@@ -176,7 +201,9 @@ class Templates:
 
     def render_list(self, template_list: List[str]):
         for template_name in template_list:
-            self.render_template(template_name=f"{template_name}.j2", filename=f"{template_name}.py")
+            self.render_template(
+                template_name=f"{template_name}.j2", filename=f"{template_name}.py"
+            )
 
     def write_to_file(self, content: str, filename: Union[str, PathLike]):
         filepath = Path(f"../aviatrix/{filename}")
