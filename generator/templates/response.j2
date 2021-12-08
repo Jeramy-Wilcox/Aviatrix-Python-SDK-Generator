@@ -1,0 +1,29 @@
+"""The Aviatrix API response object."""
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Dict, List, Union
+
+if TYPE_CHECKING:
+    import requests
+
+
+class AviatrixRESTResponse:
+    def __init__(self, response: requests.Response):
+        self.response = response
+        self.data: Dict[str, Any] = response.json()
+
+    @property
+    def success(self) -> bool:
+        return self.data["return"]
+
+    @property
+    def results(self) -> Union[Dict[str, Any], List[Any], str]:
+        return self.data.get("results", "")
+
+    @property
+    def reason(self) -> str:
+        return self.data.get("reason", "")
+
+    @property
+    def errortype(self) -> str:
+        return self.data.get("errortype", "")

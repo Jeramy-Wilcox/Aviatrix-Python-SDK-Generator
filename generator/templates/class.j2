@@ -1,0 +1,17 @@
+"""The Aviatrix {{ name }} module."""
+{% if api_calls|length > 0 %}
+from __future__ import annotations
+
+from typing import Any, List
+
+{% endif %}
+from aviatrix.api_base import APIBase
+{% for class in sub_classes %}
+from .{{ class.filename }} import {{ class.name }}
+{% endfor %}
+
+class {{ name }}(APIBase):
+    """ The Aviatrix {{ name }} class. """
+
+{% include 'property.j2' %}
+{% include 'func.j2' %}

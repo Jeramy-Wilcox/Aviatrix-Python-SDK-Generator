@@ -1,0 +1,7 @@
+{% for class in sub_classes %}
+    @property
+    def {{ class.filename.lower() }}(self):
+        """Returns {{ class.name }} object"""
+        return {{ class.name }}(base_url=self.base_url, session=self.session, cid=self.customer_id)
+
+{% endfor %}

@@ -1,0 +1,13 @@
+class AviatrixRESTException(Exception):
+    """
+    Base exception for REST API failures from aviatrix
+    """
+
+    def __init__(self, reason=None):
+        """
+        Constructor
+        Arguments:
+        reason - reason provided by the JSON response object
+        """
+        super(AviatrixRESTException, self).__init__("Aviatrix REST API: %s" % reason)
+        self.reason = reason

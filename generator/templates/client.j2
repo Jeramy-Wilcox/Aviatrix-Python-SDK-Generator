@@ -1,0 +1,74 @@
+"""The Aviatrix client module."""
+
+import requests
+import urllib3
+
+from .exceptions import AviatrixRESTException
+{% for class in data %}
+from .{{ class.filename }} import {{ class.name }}
+{% endfor %}
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+class Aviatrix:
+    """The Aviatrix client class.
+
+    This class connects to the Aviatrix Controller and provides an interface
+    for provisioning and modifying configuration of your cloud networking.
+    """
+
+    def __init__(
+        self,
+        host: str,
+        user: str,
+        password: str,
+        port: int = 443,
+        validate_certs: bool = False,
+        timeout: int = 10,
+    ):
+        """Constructor for Aviatrix Controller class.
+
+        Args:
+            host (str): Hostname or IP address of the controller.
+            user (str): Username for authentication.
+            password (str): Password for authentication.
+            port (int): TCP port if not using HTTPS. Defaults to 443.
+            validate_certs (bool): Turn certificate validation on or off. Defaults to False.
+            timeout (int):
+                How long Requests will wait for a response from the server. Defaults to 10 seconds.
+
+        """
+        self.host = host
+        self.username = user
+        self.password = password
+        self.port = port
+        self.timeout = timeout
+        self.base_url = f"https://{self.host}:{self.port}/v1/api"
+        self.session = requests.Session()
+        self.session.verify = validate_certs
+        self.customer_id = self._login()
+
+    def _login(self) -> str:
+        """Logs into the controller.
+
+        Uses the username and password set in the constructor and sets the
+        customer ID on the instance.
+
+        """
+        data = {"action": "login", "username": self.username, "password": self.password}
+
+        response = self.session.post(url=self.base_url, data=data, verify=False)
+        res_dict = response.json()
+
+        try:
+            return res_dict["CID"]
+        except KeyError:
+            raise AviatrixRESTException(res_dict["reason"])
+
+{% for class in data %}
+    @property
+    def {{ class.filename }}(self):
+        """Returns: {{ class.name }} object"""
+        return {{ class.name }}(base_url=self.base_url, session=self.session, cid=self.customer_id)
+
+{% endfor %}

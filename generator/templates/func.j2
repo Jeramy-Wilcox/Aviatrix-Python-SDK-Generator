@@ -1,0 +1,29 @@
+{% for api in api_calls %}
+    def {{ api.name }}(self, {%if api.args|length > 0 %}
+        {% for arg in api.args %}
+            {% if arg.required %}{{arg.name}}: {{ arg.type}}, {% endif %}
+        {%endfor%}
+    {% endif -%}
+    **kwargs):
+        """
+        {% for line in api.description %}
+        {{ line }}
+        {% endfor %}
+
+        {%if api.args|length > 0 %}
+        Args:
+            {% for arg in api.args%}
+            {{arg.name}} ({{ arg.type}}):
+                Required: {{ arg.required }}. {{ arg.description}}
+            {% endfor %}
+        {% endif %}
+        """
+
+        return self.avx_{{ api.method.lower() }}(action="{{api.action}}", {% if api.args|length > 0 %}
+                {% for arg in api.args %}
+                    {% if arg.required %}{{arg.name}}={{arg.name}}, {% endif %}
+                {%endfor%}
+            {% endif -%}
+            **kwargs)
+
+{% endfor %}
