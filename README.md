@@ -1,10 +1,23 @@
 # Aviatrix Python SDK Generator
 
+Generating the SDK requires that you have access to the Aviatrix API Documentation Postman Collection json file from the Aviatrix support portal. The file is located here: <https://support.aviatrix.com/apiDownloads> and requires a support account.
+
 ## How to generate SDK
 
-1. Clone the repository.
-2. CD into Aviatrix-Python-SDK-Generator/generator
-3. Download the API documentation from <https://support.aviatrix.com/apiDownloads>. This will require an active Aviatrix support account. The generator is currently tested again R6.5.2608.
-4. Upload the Aviatrix API Postman json file from the support portal into the generator directory.
-5. Rename the json file to "postman-api.json"
-6. Run parse_api_docs.py
+1. Download the Postman collection file from <https://support.aviatrix.com/apiDownloads>.
+2. Install the SDK generator library.
+
+```Bash
+python -m pip install git+https://github.com/Jeramy-Wilcox/Aviatrix-Python-SDK-Generator.git
+```
+
+3. Run the SDK generator using the CLI command.
+
+```Bash
+generate-aviatrix-sdk -f <path/to/Postman_collection_file> -o <path/to/generated_sdk_output_dir>
+```
+
+The Generator CLI command takes two optional arguments.
+
+- **-f** OR **--api_file_path**: This is the path to the Postman collection file that you downloaded. The path should include the filename.
+- **-o** OR **--output_dir**: This is the directory where the SDK will be built. It will default to the directory where the CLI command was ran.
