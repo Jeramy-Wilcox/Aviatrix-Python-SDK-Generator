@@ -41,14 +41,14 @@ setup(
         (
             "aviatrix_sdk_templates",
             [
-                "aviatrix_sdk_generator/templates/__init__.j2",
-                "aviatrix_sdk_generator/templates/api_base.j2",
-                "aviatrix_sdk_generator/templates/class.j2",
-                "aviatrix_sdk_generator/templates/client.j2",
-                "aviatrix_sdk_generator/templates/exceptions.j2",
-                "aviatrix_sdk_generator/templates/func.j2",
-                "aviatrix_sdk_generator/templates/property.j2",
-                "aviatrix_sdk_generator/templates/response.j2",
+                "aviatrix_sdk_generator/aviatrix_sdk_templates/__init__.j2",
+                "aviatrix_sdk_generator/aviatrix_sdk_templates/api_base.j2",
+                "aviatrix_sdk_generator/aviatrix_sdk_templates/class.j2",
+                "aviatrix_sdk_generator/aviatrix_sdk_templates/client.j2",
+                "aviatrix_sdk_generator/aviatrix_sdk_templates/exceptions.j2",
+                "aviatrix_sdk_generator/aviatrix_sdk_templates/func.j2",
+                "aviatrix_sdk_generator/aviatrix_sdk_templates/property.j2",
+                "aviatrix_sdk_generator/aviatrix_sdk_templates/response.j2",
             ],
         )
     ],
