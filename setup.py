@@ -39,4 +39,5 @@ setup(
             "generate-aviatrix-sdk=aviatrix_sdk_generator.generate:cli",
         ],
     },
+    package_data={"": ["*.j2"]},
 )
