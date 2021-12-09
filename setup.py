@@ -37,4 +37,5 @@ setup(
             "generate-aviatrix-sdk=aviatrix_sdk_generator.generate:cli",
         ],
     },
+    data_files=[("templates", ['templates/__init__.j2', 'templates/api_base.j2', 'templates/class.j2', 'templates/client.j2', 'templates/exceptions.j2', 'templates/func.j2', 'templates/property.j2', 'templates/response.j2'])],
 )

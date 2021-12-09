@@ -259,7 +259,6 @@ def cli(argv: Optional[Sequence[str]] = None) -> None:
     args = parser.parse_args(argv)
 
     main(api_file_path=args.api_file_path, output_dir=args.output_dir)
-    # print(__file__)
 
 if __name__ == '__main__':
     raise SystemExit(main())
