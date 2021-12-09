@@ -20,9 +20,7 @@ setup(
     long_description=readme,
     keywords="aviatrix sdk automation network infrastructure cloud",
     license="MIT",
-    packages=find_packages("aviatrix_sdk_generator"),
-    package_dir={"": "aviatrix_sdk_generator"},
-    include_package_data=True,
+    packages=find_packages(),
     install_requires=INSTALL_REQUIRES,
     python_requires=">=3.8",
     classifiers=[
@@ -39,7 +37,6 @@ setup(
             "generate-aviatrix-sdk=aviatrix_sdk_generator.generate:cli",
         ],
     },
-    package_data={"": ["*.j2"]},
     data_files=[
         (
             "Aviatrix_sdk_templates",
