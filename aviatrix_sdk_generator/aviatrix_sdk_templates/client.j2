@@ -38,15 +38,15 @@ class Aviatrix:
                 How long Requests will wait for a response from the server. Defaults to 10 seconds.
 
         """
-        self.host = host
-        self.username = user
-        self.password = password
-        self.port = port
-        self.timeout = timeout
-        self.base_url = f"https://{self.host}:{self.port}/v1/api"
-        self.session = requests.Session()
-        self.session.verify = validate_certs
-        self.customer_id = self._login()
+        self._host = host
+        self._username = user
+        self._password = password
+        self._port = port
+        self._timeout = timeout
+        self._base_url = f"https://{self._host}:{self._port}/v1/api"
+        self._session = requests.Session()
+        self._session.verify = validate_certs
+        self._customer_id = self._login()
 
     def _login(self) -> str:
         """Logs into the controller.
@@ -55,9 +55,9 @@ class Aviatrix:
         customer ID on the instance.
 
         """
-        data = {"action": "login", "username": self.username, "password": self.password}
+        data = {"action": "login", "username": self._username, "password": self._password}
 
-        response = self.session.post(url=self.base_url, data=data, verify=False)
+        response = self._session.post(url=self._base_url, data=data, verify=False)
         res_dict = response.json()
 
         try:
@@ -69,6 +69,6 @@ class Aviatrix:
     @property
     def {{ class.filename }}(self):
         """Returns: {{ class.name }} object"""
-        return {{ class.name }}(base_url=self.base_url, session=self.session, cid=self.customer_id)
+        return {{ class.name }}(base_url=self._base_url, session=self._session, cid=self._customer_id)
 
 {% endfor %}

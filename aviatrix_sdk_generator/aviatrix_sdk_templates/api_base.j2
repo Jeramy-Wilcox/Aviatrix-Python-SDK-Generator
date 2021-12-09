@@ -29,9 +29,9 @@ class APIBase:
             cid (str): Customer ID for api calls.
 
         """
-        self.base_url = base_url
-        self.session = session
-        self.customer_id = cid
+        self._base_url = base_url
+        self._session = session
+        self._customer_id = cid
 
     def _avx_api_call(
         self,
@@ -59,18 +59,18 @@ class APIBase:
             Response Result: The Aviatrix API response or failure reason.
 
         """
-        params = {} if params is None else {"CID": self.customer_id, **params}
-        data = {} if data is None else {"CID": self.customer_id, **data}
+        params = {} if params is None else {"CID": self._customer_id, **params}
+        data = {} if data is None else {"CID": self._customer_id, **data}
 
         try:
-            response = self.session.request(
+            response = self._session.request(
                 method,
-                self.base_url,
+                self._base_url,
                 params=params,
                 data=data,
             )
         except requests.exceptions.ConnectionError as e:
-            raise Exception(f"Connection error to {self.base_url}: {e}")
+            raise Exception(f"Connection error to {self._base_url}: {e}")
         except requests.exceptions.HTTPError as e:
             raise Exception(f"An HTTP error occurred: {e}")
         except requests.exceptions.URLRequired as e:
@@ -88,7 +88,7 @@ class APIBase:
             raise AviatrixRESTException(result.reason)
         return result.results
 
-    def avx_get(self, **kwargs: Any):
+    def _avx_get(self, **kwargs: Any):
         """Generic GET API call.
 
         Requires caller to pass in all args except for CID.
@@ -98,7 +98,7 @@ class APIBase:
         """
         return self._avx_api_call("GET", params={**kwargs})
 
-    def avx_post(self, **kwargs):
+    def _avx_post(self, **kwargs):
         """Generic POST API call.
 
         Requires the caller to pass in all args except for CID.

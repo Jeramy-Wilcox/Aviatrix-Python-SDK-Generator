@@ -19,7 +19,7 @@
         {% endif %}
         """
 
-        return self.avx_{{ api.method.lower() }}(action="{{api.action}}", {% if api.args|length > 0 %}
+        return self._avx_{{ api.method.lower() }}(action="{{api.action}}", {% if api.args|length > 0 %}
                 {% for arg in api.args %}
                     {% if arg.required %}{{arg.name}}={{arg.name}}, {% endif %}
                 {%endfor%}
