@@ -1,10 +1,8 @@
 import argparse
 import json
 import re
-import os
 from os import PathLike, getenv
 from pathlib import Path
-import sys
 from typing import Any, Dict, List, Union
 from typing import Optional, Sequence
 
@@ -161,6 +159,8 @@ class Templates:
     def __init__(self, template_variables: List[SUB_CLASS], output_dir: str):
         self.output_dir = Path(output_dir) / "aviatrix_sdk"
         self.template_path = Path(__file__).parent / "templates"
+        print(f'Using output directory: {self.output_dir}')
+        print(f'Using template path: {self.template_path}')
         self.data = template_variables
         self.j2_env = Environment(
             autoescape=False,
@@ -221,6 +221,7 @@ def main(api_file_path: str = None, output_dir: str = None) -> int:
     if output_dir is None:
         output_dir = "."
 
+    print(f"Using API file: {api_file_path}")
     with open(api_file_path) as file:
         pm = json.load(file)
 
