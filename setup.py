@@ -39,16 +39,9 @@ setup(
     },
     data_files=[
         (
-            "templates",
+            "",
             [
-                "aviatrix_sdk_generator/templates/__init__.j2",
-                "aviatrix_sdk_generator/templates/api_base.j2",
-                "aviatrix_sdk_generator/templates/class.j2",
-                "aviatrix_sdk_generator/templates/client.j2",
-                "aviatrix_sdk_generator/templates/exceptions.j2",
-                "aviatrix_sdk_generator/templates/func.j2",
-                "aviatrix_sdk_generator/templates/property.j2",
-                "aviatrix_sdk_generator/templates/response.j2",
+                "aviatrix_sdk_generator/templates/*.j2",
             ],
         )
     ],

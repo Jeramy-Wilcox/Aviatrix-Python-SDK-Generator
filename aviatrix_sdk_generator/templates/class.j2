@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, List
 
 {% endif %}
-from aviatrix_sdk.api_base import APIBase
+from {% for p in path %}.{% endfor %}api_base import APIBase
 {% for class in sub_classes %}
 from .{{ class.filename }} import {{ class.name }}
 {% endfor %}

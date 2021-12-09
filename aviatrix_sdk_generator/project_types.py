@@ -21,6 +21,7 @@ class API(TypedDict):
 class SUB_CLASS(TypedDict):
     name: str
     filename: str
+    path: List[str]
     sub_classes: List[Any]
     api_calls: List[API]
 

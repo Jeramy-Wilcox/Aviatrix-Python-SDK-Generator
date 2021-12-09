@@ -26,17 +26,21 @@ ARG_TYPES = {
 }
 
 
-def parse_items(items: List[Dict[str, Any]]) -> PARSED_POSTMAN:
+def parse_items(items: List[Dict[str, Any]], path: Optional[List[str]] = None) -> PARSED_POSTMAN:
     api_calls: List[API] = []
     sub_classes: List[SUB_CLASS] = []
+    _path: List[str] = path or []
     for item in items:
+        filename = snake_case_name(item["name"])
+        sub_path = [*_path, filename]
         if item["name"] == "DEPRECATED":
             continue
         try:
             sub_class = {
                 "name": sanitize_class_name(item["name"]),
-                "filename": snake_case_name(item["name"]),
-                **parse_items(item["item"]),
+                "filename": filename,
+                "path": sub_path,
+                **parse_items(item["item"], sub_path),
             }
             sub_classes.append(sub_class)  # type: ignore
         except KeyError:
