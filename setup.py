@@ -39,7 +39,7 @@ setup(
     },
     data_files=[
         (
-            "templates",
+            "./templates",
             [
                 "aviatrix_sdk_generator/templates/__init__.j2",
                 "aviatrix_sdk_generator/templates/api_base.j2",
