@@ -1,1 +1,2 @@
 recursive-include aviatrix_sdk_generator
+recursive-include aviatrix_sdk_generator/templates *.j2
