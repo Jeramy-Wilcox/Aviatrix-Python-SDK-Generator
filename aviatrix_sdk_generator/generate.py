@@ -3,6 +3,7 @@ import json
 import re
 from os import PathLike, getenv
 from pathlib import Path
+import sys
 from typing import Any, Dict, List, Union
 from typing import Optional, Sequence
 from logging import getLogger
@@ -33,11 +34,11 @@ def parse_items(items: List[Dict[str, Any]]) -> PARSED_POSTMAN:
             continue
         try:
             sub_class = {
-                    "name": sanitize_class_name(item["name"]),
-                    "filename": snake_case_name(item["name"]),
-                    **parse_items(item["item"]),
-                }
-            sub_classes.append(sub_class) #type: ignore
+                "name": sanitize_class_name(item["name"]),
+                "filename": snake_case_name(item["name"]),
+                **parse_items(item["item"]),
+            }
+            sub_classes.append(sub_class)  # type: ignore
         except KeyError:
             api_calls.append(get_params(item))
     return {
@@ -161,19 +162,24 @@ def get_value(pattern: str, description: str) -> str:
 class Templates:
     def __init__(self, template_variables: List[SUB_CLASS], output_dir: str):
         self.output_dir = Path(output_dir) / "aviatrix_sdk"
-        self.template_path = Path(__file__).parent / "templates"
-        logger.info(f'Using output directory: {self.output_dir}')
-        logger.info(f'Using template path: {self.template_path}')
+        logger.info(f"Using output directory: {self.output_dir}")
         self.data = template_variables
         self.j2_env = Environment(
             autoescape=False,
             undefined=StrictUndefined,
             trim_blocks=True,
             lstrip_blocks=True,
-            loader=FileSystemLoader(self.template_path),
+            loader=FileSystemLoader(
+                [
+                    Path(sys.path[0]).parent / "templates",
+                    Path(__file__).parent / "templates",
+                ]
+            ),
         )
 
-    def render_generated_classes(self, template_variables: List[SUB_CLASS], path: Union[str, PathLike] = ""):
+    def render_generated_classes(
+        self, template_variables: List[SUB_CLASS], path: Union[str, PathLike] = ""
+    ):
         for x in template_variables:
             _path = Path(path) / x["filename"]
             if x["sub_classes"]:
@@ -235,30 +241,33 @@ def main(api_file_path: str = None, output_dir: str = None) -> int:
     templates = Templates(data, output_dir)
     templates.render_list(["__init__", "client", "exceptions", "api_base", "response"])
     templates.render_generated_classes(data)
-
     return 0
 
 
-def cli(argv: Optional[Sequence[str]] = None) -> None:
+def cli(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(
         description=(
-            'Generate the Aviatrix Python SDK from the Aviatrix API documentation.'
+            "Generate the Aviatrix Python SDK from the Aviatrix API documentation."
         ),
-        usage='%(prog)s [options]',
+        usage="%(prog)s [options]",
     )
     parser.add_argument(
-        '-f', '--api-file-path',
-        default=getenv('AVIATRIX_API_FILEPATH') or './postman-api.json',
-        help='provide file path to API documentation file (default `%(default)s`).',
+        "-f",
+        "--api-file-path",
+        default=getenv("AVIATRIX_API_FILEPATH") or "./postman-api.json",
+        help="provide file path to API documentation file (default `%(default)s`).",
     )
     parser.add_argument(
-        '-o', '--output-dir', default='.',
-        help='the location of the generated sdk (default `local directory`).',
+        "-o",
+        "--output-dir",
+        default=".",
+        help="the location of the generated sdk (default `local directory`).",
     )
 
     args = parser.parse_args(argv)
-
     main(api_file_path=args.api_file_path, output_dir=args.output_dir)
+    return 0
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     raise SystemExit(main())
