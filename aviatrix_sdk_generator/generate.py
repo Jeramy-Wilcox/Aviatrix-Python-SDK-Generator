@@ -175,8 +175,8 @@ class Templates:
             lstrip_blocks=True,
             loader=FileSystemLoader(
                 [
-                    Path(sys.path[0]).parent / "templates",
-                    Path(__file__).parent / "templates",
+                    Path(sys.path[0]).parent / "aviatrix_sdk_templates",
+                    Path(__file__).parent / "aviatrix_sdk_templates",
                 ]
             ),
         )
