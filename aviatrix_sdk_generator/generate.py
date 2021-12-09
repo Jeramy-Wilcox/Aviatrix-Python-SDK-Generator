@@ -1,12 +1,16 @@
+import argparse
 import json
 import re
-from os import PathLike
+import os
+from os import PathLike, getenv
 from pathlib import Path
+import sys
 from typing import Any, Dict, List, Union
+from typing import Optional, Sequence
 
 from jinja2 import FileSystemLoader, StrictUndefined
 from jinja2.environment import Environment
-from project_types import API, ARGS, PARSED_POSTMAN, SUB_CLASS
+from aviatrix_sdk_generator.project_types import API, ARGS, PARSED_POSTMAN, SUB_CLASS
 
 ARG_TYPES = {
     "String": "str",
@@ -27,14 +31,12 @@ def parse_items(items: List[Dict[str, Any]]) -> PARSED_POSTMAN:
         if item["name"] == "DEPRECATED":
             continue
         try:
-
-            sub_classes.append(
-                {
+            sub_class = {
                     "name": sanitize_class_name(item["name"]),
                     "filename": snake_case_name(item["name"]),
                     **parse_items(item["item"]),
                 }
-            )
+            sub_classes.append(sub_class) #type: ignore
         except KeyError:
             api_calls.append(get_params(item))
     return {
@@ -156,21 +158,22 @@ def get_value(pattern: str, description: str) -> str:
 
 
 class Templates:
-    def __init__(self, template_variables: List[SUB_CLASS]):
+    def __init__(self, template_variables: List[SUB_CLASS], output_dir: str):
+        self.output_dir = Path(output_dir) / "aviatrix_sdk"
+        self.template_path = Path(__file__).parent / "templates"
         self.data = template_variables
         self.j2_env = Environment(
             autoescape=False,
             undefined=StrictUndefined,
             trim_blocks=True,
             lstrip_blocks=True,
-            loader=FileSystemLoader("templates"),
+            loader=FileSystemLoader(self.template_path),
         )
 
     def render_generated_classes(self, template_variables: List[SUB_CLASS], path: Union[str, PathLike] = ""):
         for x in template_variables:
             _path = Path(path) / x["filename"]
             if x["sub_classes"]:
-                # _path = _path / x['filename']
                 self.render_template(
                     template_name="class.j2",
                     filename=f"{_path}/__init__.py",
@@ -180,7 +183,6 @@ class Templates:
                     template_variables=x["sub_classes"], path=_path
                 )
             else:
-                # _path = _path / x["filename"]
                 self.render_template(
                     template_name="class.j2",
                     template_variables=x,
@@ -205,25 +207,55 @@ class Templates:
             )
 
     def write_to_file(self, content: str, filename: Union[str, PathLike]):
-        filepath = Path(f"../aviatrix/{filename}")
+        filepath = self.output_dir / filename
         filepath.parent.mkdir(parents=True, exist_ok=True)
 
         with filepath.open(mode="w") as f:
             f.write(content)
 
 
-def main():
-    with open("./postman-api.json") as file:
+def main(api_file_path: str = None, output_dir: str = None) -> int:
+    if api_file_path is None:
+        api_file_path = "./postman-api.json"
+
+    if output_dir is None:
+        output_dir = "."
+
+    with open(api_file_path) as file:
         pm = json.load(file)
 
     data = parse_items(pm["item"])["sub_classes"]
     with open("parsed_api_values.json", "w") as json_file:
         json.dump(data, json_file, indent=4)
 
-    templates = Templates(data)
+    templates = Templates(data, output_dir)
     templates.render_list(["__init__", "client", "exceptions", "api_base", "response"])
     templates.render_generated_classes(data)
 
+    return 0
 
-if __name__ == "__main__":
-    main()
+
+def cli(argv: Optional[Sequence[str]] = None) -> None:
+    parser = argparse.ArgumentParser(
+        description=(
+            'Generate the Aviatrix Python SDK from the Aviatrix API documentation.'
+        ),
+        usage='%(prog)s [options]',
+    )
+    parser.add_argument(
+        '-f', '--api-file-path',
+        default=getenv('AVIATRIX_API_FILEPATH') or './postman-api.json',
+        help='provide file path to API documentation file (default `%(default)s`).',
+    )
+    parser.add_argument(
+        '-o', '--output-dir', default='.',
+        help='the location of the generated sdk (default `local directory`).',
+    )
+
+    args = parser.parse_args(argv)
+
+    main(api_file_path=args.api_file_path, output_dir=args.output_dir)
+    # print(__file__)
+
+if __name__ == '__main__':
+    raise SystemExit(main())
