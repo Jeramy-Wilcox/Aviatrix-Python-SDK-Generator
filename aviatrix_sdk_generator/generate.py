@@ -227,7 +227,7 @@ class Templates:
             f.write(content)
 
 
-def main(api_file_path: str = None, output_dir: str = None) -> int:
+def main(api_file_path: str = None, output_dir: str = None, debug_file: bool = False) -> int:
     if api_file_path is None:
         api_file_path = "./postman-api.json"
 
@@ -239,8 +239,9 @@ def main(api_file_path: str = None, output_dir: str = None) -> int:
         pm = json.load(file)
 
     data = parse_items(pm["item"])["sub_classes"]
-    with open("parsed_api_values.json", "w") as json_file:
-        json.dump(data, json_file, indent=4)
+    if debug_file:
+        with open("parsed_api_values.json", "w") as json_file:
+            json.dump(data, json_file, indent=4)
 
     templates = Templates(data, output_dir)
     templates.render_list(["__init__", "client", "exceptions", "api_base", "response"])
@@ -268,8 +269,16 @@ def cli(argv: Optional[Sequence[str]] = None) -> int:
         help="the location of the generated sdk (default `local directory`).",
     )
 
+    parser.add_argument(
+        "-d",
+        "--debug_file",
+        type=bool,
+        default=False,
+        help="Output the parsed API file to a file for debugging purposes.",
+    )
+
     args = parser.parse_args(argv)
-    main(api_file_path=args.api_file_path, output_dir=args.output_dir)
+    main(api_file_path=args.api_file_path, output_dir=args.output_dir, debug_file=args.debug_file)
     return 0
 
 
