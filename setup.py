@@ -37,5 +37,19 @@ setup(
             "generate-aviatrix-sdk=aviatrix_sdk_generator.generate:cli",
         ],
     },
-    data_files=[("templates", ['templates/__init__.j2', 'templates/api_base.j2', 'templates/class.j2', 'templates/client.j2', 'templates/exceptions.j2', 'templates/func.j2', 'templates/property.j2', 'templates/response.j2'])],
+    data_files=[
+        (
+            "templates",
+            [
+                "aviatrix_sdk_generator/templates/__init__.j2",
+                "aviatrix_sdk_generator/templates/api_base.j2",
+                "aviatrix_sdk_generator/templates/class.j2",
+                "aviatrix_sdk_generator/templates/client.j2",
+                "aviatrix_sdk_generator/templates/exceptions.j2",
+                "aviatrix_sdk_generator/templates/func.j2",
+                "aviatrix_sdk_generator/templates/property.j2",
+                "aviatrix_sdk_generator/templates/response.j2",
+            ],
+        )
+    ],
 )
