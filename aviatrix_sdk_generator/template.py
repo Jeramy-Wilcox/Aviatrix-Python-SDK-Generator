@@ -7,13 +7,11 @@ from typing import Any, List, Union
 from jinja2 import FileSystemLoader, StrictUndefined
 from jinja2.environment import Environment
 
-from aviatrix_sdk_generator.project_types import SUB_CLASS
-
 logger = getLogger(__name__)
 
 
 class Templates:
-    def __init__(self, template_variables: List[SUB_CLASS], output_dir: str):
+    def __init__(self, template_variables: List[dict], output_dir: str):
         self.output_dir = Path(output_dir) / "aviatrix_sdk"
         logger.info(f"Using output directory: {self.output_dir}")
         self.data = template_variables
@@ -31,7 +29,7 @@ class Templates:
         )
 
     def render_generated_classes(
-        self, template_variables: List[SUB_CLASS], path: Union[str, PathLike] = ""
+        self, template_variables: List[dict], path: Union[str, PathLike] = ""
     ):
         for x in template_variables:
             _path = Path(path) / x["filename"]
