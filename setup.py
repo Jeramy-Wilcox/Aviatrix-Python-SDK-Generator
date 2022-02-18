@@ -34,7 +34,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "generate-aviatrix-sdk=aviatrix_sdk_generator.generate:cli",
+            "generate-aviatrix-sdk=aviatrix_sdk_generator.cli:cli",
         ],
     },
     data_files=[

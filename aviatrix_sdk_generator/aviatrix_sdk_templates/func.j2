@@ -16,6 +16,7 @@
             {{arg.name}} ({{ arg.type}}):
                 Required: {{ arg.required }}. {{ arg.description}}
             {% endfor %}
+            kwargs (dict): Any additional optional parameters.
         {% endif %}
         """
 

@@ -2,8 +2,10 @@
 {% if api_calls|length > 0 %}
 from __future__ import annotations
 
-from typing import Any, List
+{% if arg_types|length > 0 %}
+from typing import {{ arg_types|join(', ') }}
 
+{% endif %}
 {% endif %}
 from {% for p in path %}.{% endfor %}{% if sub_classes %}.{% endif %}api_base import APIBase
 {% for class in sub_classes %}
