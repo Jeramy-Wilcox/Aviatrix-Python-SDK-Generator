@@ -2,7 +2,7 @@
 """The setup script."""
 from setuptools import find_packages, setup
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __author__ = "Jeramy Wilcox"
 
 with open("README.md", "r", encoding="utf-8") as readme_file:
