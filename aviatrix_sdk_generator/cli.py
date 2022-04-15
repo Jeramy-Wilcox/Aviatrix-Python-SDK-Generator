@@ -11,10 +11,10 @@ logger = getLogger(__name__)
 
 
 def main(
-    api_file_path: str = None,
-    output_dir: str = None,
+    api_file_path: Optional[str] = None,
+    output_dir: Optional[str] = None,
     debug_file: bool = False,
-    debug_file_name: str = None,
+    debug_file_name: Optional[str] = None,
 ) -> int:
     if api_file_path is None:
         api_file_path = "./postman-api.json"

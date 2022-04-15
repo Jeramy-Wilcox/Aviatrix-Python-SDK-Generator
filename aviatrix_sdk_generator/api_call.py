@@ -19,7 +19,7 @@ class Call:
 
     @property
     def name(self) -> str:
-        return self.action
+        return self.action.replace(".", "_")
 
     @property
     def method(self) -> str:

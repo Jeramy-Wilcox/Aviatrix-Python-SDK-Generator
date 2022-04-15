@@ -51,7 +51,7 @@ class _Arg:
 
     @property
     def required(self):
-        if self.get_value("required").upper() == "YES":
+        if self.get_value("required").upper() == "YES" and "[" not in self.key:
             return True
         else:
             return False
@@ -99,6 +99,10 @@ class _Arg:
             "example": self.example,
             "required": self.required,
         }
+
+    @staticmethod
+    def clean_arg_name(name: str) -> str:
+        return name.replace("[", "_").replace("]", "").replace(" ", "_")
 
 
 class _Args:
