@@ -27,7 +27,10 @@ TYPE_IMPORTS = {
 class _Arg:
     def __init__(self, arg: Dict[str, str]):
         self._arg = arg
-        self._description = self._arg.get("description", "")
+        try:
+            self._description = self._arg.get("description", "")
+        except Exception:
+            self._description = ""
 
     def __str__(self):
         return f"{self.key}: {self.value}. Description: {self.description}"

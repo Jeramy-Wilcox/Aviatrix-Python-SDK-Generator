@@ -1,9 +1,12 @@
 """The Aviatrix client module."""
 
+from typing import Any, Dict, Literal, Optional
+
 import requests
 import urllib3
 
 from .exceptions import AviatrixRESTException
+from .api_base import APIBase
 {% for class in data %}
 from .{{ class.filename }} import {{ class.name }}
 {% endfor %}
@@ -47,6 +50,7 @@ class Aviatrix:
         self._session = requests.Session()
         self._session.verify = validate_certs
         self._customer_id = self._login()
+        self._base_api = APIBase(base_url=self._base_url, session=self._session, cid=self._customer_id)
 
     def _login(self) -> str:
         """Logs into the controller.
@@ -64,6 +68,46 @@ class Aviatrix:
             return res_dict["CID"]
         except KeyError:
             raise AviatrixRESTException(res_dict["reason"])
+
+    def request(
+        self,
+        method: Literal["GET", "POST"],
+        params: Optional[Dict[str, str]] = None,
+        data: Optional[Dict[str, str]] = None,
+    ) -> Any:
+        """Base request to the Aviatrix API
+
+        Args:
+            method (Literal[GET, POST]): HTTP method for the request
+            params (Dict[str, str], optional): Keyword args for GET requests. Defaults to None.
+            data (Dict[str, str], optional): Body dict for POST requests. Defaults to None.
+
+        Returns:
+            dict: The response from the Aviatrix API
+        """
+        return self._base_api._avx_api_call(method=method, params=params, data=data)
+
+    def get(self, action: str, **kwargs) -> Any:
+        """GET request
+
+        Args:
+            action (str): The action string for the Aviatrix request.
+
+        Returns:
+            unknown: The response from the Aviatrix API
+        """
+        return self._base_api._avx_get(action=action, **kwargs)
+
+    def post(self, action: str, **kwargs) -> Any:
+        """GET request
+
+        Args:
+            action (str): The action string for the Aviatrix request.
+
+        Returns:
+            unknown: The response from the Aviatrix API
+        """
+        return self._base_api._avx_post(action=action, **kwargs)
 
 {% for class in data %}
     @property
